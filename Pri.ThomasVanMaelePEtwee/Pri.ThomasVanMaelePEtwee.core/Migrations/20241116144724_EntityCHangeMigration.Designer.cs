@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pri.ThomasVanMaelePEtwee.core.Data;
 
@@ -11,9 +12,11 @@ using Pri.ThomasVanMaelePEtwee.core.Data;
 namespace Pri.ThomasVanMaelePEtwee.core.Migrations
 {
     [DbContext(typeof(PoolDbContext))]
-    partial class PoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241116144724_EntityCHangeMigration")]
+    partial class EntityCHangeMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,14 +55,14 @@ namespace Pri.ThomasVanMaelePEtwee.core.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "6d21b490-ca78-4dc3-8c8f-cf6611a598dc",
+                            ConcurrencyStamp = "97a402f3-d187-4bb9-a8a2-add53ca6c44a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "d3b79a73-2c13-464a-8237-e76d29c92e92",
+                            ConcurrencyStamp = "0938b655-edd4-4463-8d24-83c076d167f9",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         });
@@ -260,7 +263,7 @@ namespace Pri.ThomasVanMaelePEtwee.core.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "612cb349-aa59-49a3-8e0e-affff72056a8",
+                            ConcurrencyStamp = "a2f90c10-9935-449b-aa1b-198374e06a4f",
                             Email = "admin@pri.be",
                             EmailConfirmed = false,
                             FirstName = "Admin",
@@ -268,9 +271,9 @@ namespace Pri.ThomasVanMaelePEtwee.core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@PRI.BE",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEC0nRxIbHXkbWQRgIy2jYCJmoI5oKRoW892pNhBz4h3OWEvOJ+BSP6wn8HYVEOkijg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBVNtwn//pLhExNX3sGcViR4wDD6D3mkjn3dDYEjgdf+IsvdsHSEmm/swtJRfaVHLg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "37738e3c-8ad7-4772-81b5-78c7e3d47619",
+                            SecurityStamp = "7a1a47a9-62c4-45ca-9cd9-5057ead8c740",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -278,7 +281,7 @@ namespace Pri.ThomasVanMaelePEtwee.core.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cc000a96-e06c-4b53-ae7e-6360c4179340",
+                            ConcurrencyStamp = "4b1c280e-3427-4b2b-8091-0ac0563d92b7",
                             Email = "customer@pri.be",
                             EmailConfirmed = false,
                             FirstName = "Customer",
@@ -286,9 +289,9 @@ namespace Pri.ThomasVanMaelePEtwee.core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "CUSTOMER@PRI.BE",
                             NormalizedUserName = "CUSTOMER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGo2CoMlVzx3gxvH/ltVyKMTCkUrca5Ha/NvpNfl83wMXHuEEv95iqkAIylyxfWt8w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIFJUkmHzILZD3XnR/40jqsMSSjgHdXDRkuw0+dDuRGRQGoPePs3qn1z0KHMoWpRSQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c7f382fc-b0ee-488a-be25-94147842cbb0",
+                            SecurityStamp = "460526ff-f019-4763-8e9d-223f4f39deb0",
                             TwoFactorEnabled = false,
                             UserName = "customer"
                         });
@@ -301,12 +304,6 @@ namespace Pri.ThomasVanMaelePEtwee.core.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdminComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerComment")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -334,8 +331,7 @@ namespace Pri.ThomasVanMaelePEtwee.core.Migrations
                         new
                         {
                             Id = 1,
-                            CustomerComment = "Ik wil de goedkoopste prijs aub",
-                            RequestDate = new DateTime(2024, 11, 16, 16, 25, 14, 705, DateTimeKind.Utc).AddTicks(8530),
+                            RequestDate = new DateTime(2024, 11, 16, 14, 47, 23, 344, DateTimeKind.Utc).AddTicks(5744),
                             Status = 0,
                             UserId = "2"
                         });

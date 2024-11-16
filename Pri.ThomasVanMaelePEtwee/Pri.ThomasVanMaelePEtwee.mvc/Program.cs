@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pri.ThomasVanMaelePEtwee.core.Data;
 using Pri.ThomasVanMaelePEtwee.core.Entities;
+using Pri.ThomasVanMaelePEtwee.core.Services;
+using Pri.ThomasVanMaelePEtwee.core.Services.Interfaces;
 
 namespace Pri.ThomasVanMaelePEtwee.mvc
 {
@@ -26,6 +28,9 @@ namespace Pri.ThomasVanMaelePEtwee.mvc
                 options.Lockout.MaxFailedAccessAttempts = 3;
             }).AddEntityFrameworkStores<PoolDbContext>()
             .AddDefaultTokenProviders();
+
+            builder.Services.AddScoped<IQuotationService<Quotation>, EfQuotationService>();
+            
 
             var app = builder.Build();
 

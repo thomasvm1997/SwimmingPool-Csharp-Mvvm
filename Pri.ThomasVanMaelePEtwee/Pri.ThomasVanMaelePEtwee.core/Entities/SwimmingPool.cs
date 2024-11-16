@@ -8,7 +8,7 @@
         public float Width { get; set; }   
         public float Depth { get; set; }   
         public bool HasHeating { get; set; }
-        public int QuotationId { get; set; }
-        public Quotation Quotation { get; set; }
+        public int? QuotationId { get; set; }
+        public Quotation? Quotation { get; set; }
     }
 }

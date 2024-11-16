@@ -9,9 +9,11 @@ namespace Pri.ThomasVanMaelePEtwee.core.Entities
         public decimal? Price { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-        public ICollection<SwimmingPool> Pools { get; set; } = new List<SwimmingPool>();
+        public ICollection<SwimmingPool>? Pools { get; set; } = new List<SwimmingPool>();
         public DateTime RequestDate { get; set; }
         public DateTime? ResponseDate { get; set; }
         public QuotationStatus Status { get; set; }
+        public string? CustomerComment { get; set; }
+        public string? AdminComment { get; set; }
     }
 }

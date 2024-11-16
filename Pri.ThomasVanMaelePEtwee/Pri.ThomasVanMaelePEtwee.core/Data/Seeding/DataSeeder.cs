@@ -79,7 +79,9 @@ namespace Pri.ThomasVanMaelePEtwee.core.Data.Seeding
                 Id = 1,
                 UserId = customerUser.Id,             
                 RequestDate = DateTime.UtcNow,
-                Status = Enums.QuotationStatus.Pending
+                Status = Enums.QuotationStatus.Pending,
+                CustomerComment = "Ik wil de goedkoopste prijs aub"
+                
             };
 
             var swimmingPool = new SwimmingPool

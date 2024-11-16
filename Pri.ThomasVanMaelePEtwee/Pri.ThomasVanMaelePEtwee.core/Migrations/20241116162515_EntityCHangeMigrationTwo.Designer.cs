@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pri.ThomasVanMaelePEtwee.core.Data;
 
@@ -11,9 +12,11 @@ using Pri.ThomasVanMaelePEtwee.core.Data;
 namespace Pri.ThomasVanMaelePEtwee.core.Migrations
 {
     [DbContext(typeof(PoolDbContext))]
-    partial class PoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241116162515_EntityCHangeMigrationTwo")]
+    partial class EntityCHangeMigrationTwo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
