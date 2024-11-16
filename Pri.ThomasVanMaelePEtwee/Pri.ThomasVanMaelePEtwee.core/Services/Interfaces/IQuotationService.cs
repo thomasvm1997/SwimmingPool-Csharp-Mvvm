@@ -14,9 +14,10 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services.Interfaces
     {
         IQueryable<T> GetAll();
         Task<ResultModel<IEnumerable<T>>> GetAllAsync();
-        Task<ResultModel<T>> GetbyIdAsync(string id);
+        Task<ResultModel<T>> GetQuotationbyIdAsync(int id);
         Task<BaseResultModel> CreateAsyncQuotation(QuotationCreateRequestModel quotationCreate, SwimmingPoolCreateRequestModel swimmingPoolCreate);
         Task<BaseResultModel> UpdateAsyncQuotation(QuotationUpdateRequestModel updateRequestModel);
+        Task<ResultModel<IEnumerable<T>>> GetAllQuotationsByUserIDAsync(string userId);
         Task<BaseResultModel> DeleteAsync(int quotationId);
         Task<BaseResultModel> SaveChangesAsync();
     }

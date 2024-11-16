@@ -50,9 +50,9 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
             };
         }
 
-        public async Task<ResultModel<Quotation>> GetbyIdAsync(string id)
+        public async Task<ResultModel<Quotation>> GetQuotationbyIdAsync(int id)
         {
-            var quotation = await GetAll().Where(c => c.UserId == id).FirstOrDefaultAsync();
+            var quotation = await GetAll().Where(c => c.Id == id).FirstOrDefaultAsync();
 
             if (quotation == null)
             {
@@ -144,7 +144,7 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);
-            var quotationData = GetbyIdAsync(updateRequestModel.UserId);
+            var quotationData = GetQuotationbyIdAsync(updateRequestModel.Id);
             var quotation = quotationData.Result.Data;
 
             if (userRoles.Contains("Admin"))
@@ -174,7 +174,8 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
 
         public async Task<BaseResultModel> DeleteAsync(int quotationId)
         {
-            var quotation = await GetAll().FirstOrDefaultAsync(c => c.Id == quotationId);
+            var quotationData = await GetQuotationbyIdAsync(quotationId);
+            var quotation = quotationData.Data;
             if (quotation != null)
             {
                 _dbContext.Remove(quotation);
@@ -206,5 +207,26 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
             }
         }
 
+        public async Task<ResultModel<IEnumerable<Quotation>>> GetAllQuotationsByUserIDAsync(string userId)
+        {
+            var quotation = await GetAll().Where(c => c.UserId == userId).ToListAsync();
+
+            if (quotation == null)
+            {
+                return new ResultModel<IEnumerable<Quotation>>
+                {
+                    IsSuccess = false,
+                    Errors = new List<string> { $"Quotations with id:{userId} not found" }
+                };
+            }
+            else
+            {
+                return new ResultModel<IEnumerable<Quotation>>
+                {
+                    Data = quotation,
+                    IsSuccess = true
+                };
+            }
+        }
     }
 }
