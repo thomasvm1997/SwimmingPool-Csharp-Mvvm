@@ -33,7 +33,7 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
 
         public async Task<ResultModel<IEnumerable<Quotation>>> GetAllAsync()
         {
-            var quotations = await GetAll().Include(c => c.Pools).ToListAsync();
+            var quotations = await GetAll().Include(c => c.Pools).Include(p => p.User).ToListAsync();
 
             if (quotations.Count == 0)
             {
@@ -52,7 +52,7 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
 
         public async Task<ResultModel<Quotation>> GetQuotationbyIdAsync(int id)
         {
-            var quotation = await GetAll().Where(c => c.Id == id).FirstOrDefaultAsync();
+            var quotation = await GetAll().Include(c => c.Pools).Where(c => c.Id == id).FirstOrDefaultAsync();
 
             if (quotation == null)
             {
@@ -196,10 +196,12 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
         public async Task<BaseResultModel> DeleteAsync(int quotationId)
         {
             var quotationData = await GetQuotationbyIdAsync(quotationId);
+            var swimmingPools = quotationData.Data.Pools;
             var quotation = quotationData.Data;
             if (quotation != null)
             {
                 _dbContext.Remove(quotation);
+                _dbContext.RemoveRange(swimmingPools);
                 return await SaveChangesAsync();
             }
             return new BaseResultModel

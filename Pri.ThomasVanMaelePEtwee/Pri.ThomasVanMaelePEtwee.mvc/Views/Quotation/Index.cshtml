@@ -25,7 +25,14 @@ else
         @foreach (var item in Model.Quotations)
         {
             <tr>
-                <td>@item.UserName</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>@item.UserName</td>
+                }
+                else
+                {
+                    <td>@item.UserName</td>
+                }
                 <td>@item.Price</td>
                 <td>@item.RequestDate</td>
                 <td>
@@ -48,6 +55,16 @@ else
                        class="btn btn-outline-primary btn-sm">
                         ✏️ Update
                     </a>
+                    <form asp-controller="Quotation"
+                          asp-action="DeleteQuotationConfirmed"
+                          asp-route-id="@item.Id"
+                          method="post"
+                          style="display:inline;">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                onclick="return confirm('Weet je zeker dat je deze offerte wilt verwijderen?');">
+                            ❌ Delete
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

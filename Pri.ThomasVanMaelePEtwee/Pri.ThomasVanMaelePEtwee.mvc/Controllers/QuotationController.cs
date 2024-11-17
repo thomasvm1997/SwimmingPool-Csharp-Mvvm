@@ -44,7 +44,7 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
                 {
                     Id = q.Id,
                     Price = q.Price,
-                    UserName = q.User?.UserName,
+                    UserName = q.User.UserName,
                     SwimmingpoolNames = q.Pools.Select(p => p.Name).ToList(),
                     RequestDate = q.RequestDate,
                     ResponseDate = q.ResponseDate,
@@ -178,6 +178,7 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
                     return View(vm);
                 }
             }
+            else {
             var quotation = new QuotationUpdateRequestModel
             {
                 UserId = userId,
@@ -191,6 +192,23 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
                 ViewBag.ErrorMessage = $"Could not add quotation: {result.Errors.FirstOrDefault()}";
                 return View(vm);
             }
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteQuotationConfirmed(int id)
+        {
+            var result = await _quotationService.DeleteAsync(id);
+
+            if (!result.IsSuccess)
+            {
+                ViewBag.ErrorMessage = $"Could not delete quotation: {result.Errors.FirstOrDefault()}";
+                return RedirectToAction("Index");
+            }
+
             return RedirectToAction("Index");
         }
     }

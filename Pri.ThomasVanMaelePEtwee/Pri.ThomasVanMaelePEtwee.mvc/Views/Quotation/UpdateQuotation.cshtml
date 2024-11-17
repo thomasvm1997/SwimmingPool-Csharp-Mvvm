@@ -8,9 +8,10 @@
 
 
 <form asp-action="UpdateQuotation" method="post">
-
+    <input type="hidden" asp-for="Id" />
     @if (User.IsInRole("Admin"))
     {
+
         <div class="form-group">
             <label asp-for="AdminComment" class="control-label">Admin Comment</label>
             <textarea asp-for="AdminComment" class="form-control"></textarea>
@@ -23,9 +24,9 @@
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
     }
-    else if(User.IsInRole("Customer"))
+    else if (User.IsInRole("Customer"))
     {
-        <input type="hidden" asp-for="Id" />
+
 
         <div class="form-group">
             <label asp-for="CustomerComment" class="control-label">Customer Comment</label>
