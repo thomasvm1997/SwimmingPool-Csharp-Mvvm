@@ -27,6 +27,7 @@
                         </li>
                         @if (User.Identity.IsAuthenticated == false)
                         {
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
                             </li>
@@ -37,8 +38,26 @@
                         }
                         else
                         {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Quotation" asp-action="Index">Alle offertes</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Quotation" asp-action="Index">Mijn offertes</a>
+                                </li>
+                                <li class="nav-item">
+
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Quotation" asp-action="CreateQuotation">Offerte Aanvragen</a>
+                                </li>
+                            }
                             <li class="nav-item">
-                                
+
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                             </li>
                             <li class="nav-item" id="loginname">

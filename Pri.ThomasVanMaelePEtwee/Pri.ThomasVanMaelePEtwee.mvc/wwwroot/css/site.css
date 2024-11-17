@@ -24,3 +24,18 @@ body {
 #loginname{
     float: right;
 }
+
+.status-label {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white; /* Default text color */
+}
+
+    .status-label.Pending {
+        background-color: orange;
+    }
+
+    .status-label.Approved {
+        background-color: green;
+    }

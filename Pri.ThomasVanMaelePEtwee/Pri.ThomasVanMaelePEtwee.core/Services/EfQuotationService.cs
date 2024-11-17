@@ -73,20 +73,18 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
         }
         public async Task<BaseResultModel> CreateAsyncQuotation(QuotationCreateRequestModel quotationCreate, SwimmingPoolCreateRequestModel swimmingPoolCreate)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(c => c.Id == quotationCreate.UserId);
-            
-            foreach(var quotations in user.Quotations ) 
+            var hasPendingQuotation = await _dbContext.Quotations
+                                            .AnyAsync(q => q.UserId == quotationCreate.UserId && q.Status == QuotationStatus.Pending);
+
+            if (hasPendingQuotation)
             {
-                if (quotations.Status == QuotationStatus.Pending)
+
+                return new BaseResultModel
                 {
-                    return new BaseResultModel
-                    {
                     IsSuccess = false,
                     Errors = new List<string> { "You still have a pending quotation" }
-                    };
-                }
+                };
             }
-            
 
             var quotation = new Quotation
             {
@@ -96,10 +94,24 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
                 CustomerComment = quotationCreate.CustomerComment
             };
 
-            _dbContext.Add(quotation);
-            await SaveChangesAsync();
+            try
+            {
+                _dbContext.Add(quotation);
+                await SaveChangesAsync();
+            }
+            catch
+            {
+                return new BaseResultModel
+                {
+                    IsSuccess = false,
+                    Errors = new List<string> {"Couldn't add quotation to database" }
+                };
+            }
 
-            var addedQuotations = await _dbContext.Quotations.LastOrDefaultAsync();
+            var addedQuotations = await _dbContext.Quotations
+                                  .Where(q => q.UserId == quotationCreate.UserId)
+                                    .OrderByDescending(q => q.Id) 
+                                        .FirstOrDefaultAsync();
 
             var pool = new SwimmingPool
             {
@@ -111,11 +123,20 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
                 QuotationId = addedQuotations.Id
             };
 
-
+            try {
             addedQuotations.Pools.Add(pool);
             _dbContext.Add(pool);
             await SaveChangesAsync();
+            }
 
+            catch
+            {
+                return new BaseResultModel
+                {
+                    IsSuccess = false,
+                    Errors = new List<string> { "Couldn't add swimmingpool to database" }
+                };
+            }
             return new BaseResultModel
             {
                 IsSuccess = true,
@@ -149,7 +170,7 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
 
             if (userRoles.Contains("Admin"))
             {
-                quotation.Status = updateRequestModel.Status;
+                quotation.Status = QuotationStatus.Approved;
                 quotation.ResponseDate = DateTime.Now;
                 quotation.Price = updateRequestModel.Price;
                 quotation.AdminComment = updateRequestModel.AdminComment;

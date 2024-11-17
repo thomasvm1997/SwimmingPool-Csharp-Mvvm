@@ -1,0 +1,54 @@
+﻿@model QuotationIndexViewModel
+
+@if (User.IsInRole("Admin"))
+{
+    <h1>Alle offertes</h1>
+}
+else 
+{
+    <h1>Mijn offertes</h1>
+}
+
+
+<div class="row">
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-controller="Chocolate" asp-action="Create" class="btn btn-outline-success">➕ Voeg nieuwe toe</a>
+    }
+</div>
+<div class="row">
+    <table class="table table-hover">
+        <tr>
+            <th>Klant</th>
+            <th>Prijs</th>
+            <th>Aanvraag datum</th>
+            <th>Status</th>
+            <th>Zwembaden</th>
+            <th>Commentaar klant</th>
+            <th>Commentaar Baas</th>
+            <th>Respons datum</th>
+        </tr>
+        @foreach (var item in Model.Quotations)
+        {
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.Price</td>
+                <td>@item.RequestDate</td>
+                <td>
+                    <span class="status-label @item.Status">
+                    @item.Status
+                    </span>
+                </td>
+                <td>
+                    @foreach (var pool in item.SwimmingpoolNames)
+                    {
+                        <p>@pool</p>
+                    }
+                <td>@item.CustomerComment</td>
+                <td>@item.AdminComment</td>
+                <td>@item.ResponseDate</td>
+
+            </tr>
+        }
+    </table>
+</div>

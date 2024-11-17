@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Cors.Infrastructure;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Pri.ThomasVanMaelePEtwee.core.Data;
 using Pri.ThomasVanMaelePEtwee.core.Entities;
 using Pri.ThomasVanMaelePEtwee.core.Services.Interfaces;
+using Pri.ThomasVanMaelePEtwee.core.Services.Models.ResultModels.Quotation;
+using Pri.ThomasVanMaelePEtwee.core.Services.Models.ResultModels.SwimmingPool;
 using Pri.ThomasVanMaelePEtwee.mvc.Models;
 using System.Security.Claims;
 
@@ -19,10 +23,11 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var resultAdmin = await _quotationService.GetAllAsync();
-            var resultCustomer = await _quotationService.GetbyIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var resultCustomer = await _quotationService.GetAllQuotationsByUserIDAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             if (!resultAdmin.IsSuccess || !resultCustomer.IsSuccess)
             {
@@ -30,6 +35,7 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
                 ViewBag.ErrorMessage = "Could not retrieve quotations. Please try again later.";
                 return View("Error");
             }
+
             var viewModel = new QuotationIndexViewModel();
 
             if (User.IsInRole("Admin"))
@@ -53,11 +59,12 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
 
             else 
             {
+                var customerName = User.Identity.Name;
                 var quotationViewModels = resultCustomer.Data.Select(q => new QuotationDetailViewModel
                 {
                     Id = q.Id,
                     Price = q.Price,
-                    UserName = q.User?.UserName,
+                    UserName = customerName,
                     SwimmingpoolNames = q.Pools.Select(p => p.Name).ToList(),
                     RequestDate = q.RequestDate,
                     ResponseDate = q.ResponseDate,
@@ -69,17 +76,53 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
                 viewModel.Quotations = quotationViewModels;
                 return View(viewModel);
             }
-            var vm = result.Data.Select(c => new CarInfoViewModel
+            
+        }
+        [HttpGet]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> CreateQuotation()
+        {
+            var vm = new CreateQuotationWithPoolViewModel
             {
-                Id = c.Id,
-                ModelName = c.Model,
-                Brand = c.Brand,
-                TopSpeed = c.TopSpeed,
-                Description = c.Description,
-                CategoryName = c.Category.Name,
-            }).ToList();
-
+                SwimmingPool = new SwimmingPoolCreateViewModel(),
+                Quotation = new QuotationCreateViewModel()
+            };
             return View(vm);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> CreateQuotation(CreateQuotationWithPoolViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var pool = new SwimmingPoolCreateRequestModel
+            {
+                Depth = vm.SwimmingPool.Depth,
+                HasHeating = vm.SwimmingPool.HasHeating,
+                Length = vm.SwimmingPool.Length,
+                Name = vm.SwimmingPool.Name,
+                Width = vm.SwimmingPool.Width,
+            };
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var quotation = new QuotationCreateRequestModel
+            {
+                UserId = userId,
+                CustomerComment = vm.Quotation.CustomerComment,
+
+            };
+
+            var result = await _quotationService.CreateAsyncQuotation(quotation, pool);
+
+            if (!result.IsSuccess)
+            {
+                ViewBag.ErrorMessage = $"Could not add quotation: {result.Errors.FirstOrDefault()}";
+                return View();
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
