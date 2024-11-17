@@ -9,13 +9,6 @@ else
     <h1>Mijn offertes</h1>
 }
 
-
-<div class="row">
-    @if (User.IsInRole("Admin"))
-    {
-        <a asp-controller="Chocolate" asp-action="Create" class="btn btn-outline-success">➕ Voeg nieuwe toe</a>
-    }
-</div>
 <div class="row">
     <table class="table table-hover">
         <tr>
@@ -27,6 +20,7 @@ else
             <th>Commentaar klant</th>
             <th>Commentaar Baas</th>
             <th>Respons datum</th>
+            <th>Acties</th>
         </tr>
         @foreach (var item in Model.Quotations)
         {
@@ -36,7 +30,7 @@ else
                 <td>@item.RequestDate</td>
                 <td>
                     <span class="status-label @item.Status">
-                    @item.Status
+                        @item.Status
                     </span>
                 </td>
                 <td>
@@ -47,7 +41,14 @@ else
                 <td>@item.CustomerComment</td>
                 <td>@item.AdminComment</td>
                 <td>@item.ResponseDate</td>
-
+                <td>
+                    <a asp-controller="Quotation"
+                       asp-action="UpdateQuotation"
+                       asp-route-quotationId="@item.Id"
+                       class="btn btn-outline-primary btn-sm">
+                        ✏️ Update
+                    </a>
+                </td>
             </tr>
         }
     </table>

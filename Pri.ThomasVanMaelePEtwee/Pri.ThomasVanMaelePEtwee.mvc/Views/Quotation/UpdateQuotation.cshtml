@@ -1,0 +1,47 @@
+﻿@model QuotationUpdateViewModel
+
+@{
+    ViewData["Title"] = "Update Quotation";
+}
+
+<h2>Update Quotation</h2>
+
+
+<form asp-action="UpdateQuotation" method="post">
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="form-group">
+            <label asp-for="AdminComment" class="control-label">Admin Comment</label>
+            <textarea asp-for="AdminComment" class="form-control"></textarea>
+            <span asp-validation-for="AdminComment" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Price" class="control-label">Price</label>
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+    }
+    else if(User.IsInRole("Customer"))
+    {
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label asp-for="CustomerComment" class="control-label">Customer Comment</label>
+            <textarea asp-for="CustomerComment" class="form-control"></textarea>
+            <span asp-validation-for="CustomerComment" class="text-danger"></span>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Update Quotation</button>
+</form>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const errorMessage = '@ViewBag.ErrorMessage';
+        if (errorMessage) {
+            alert(errorMessage);
+        }
+    });
+</script>

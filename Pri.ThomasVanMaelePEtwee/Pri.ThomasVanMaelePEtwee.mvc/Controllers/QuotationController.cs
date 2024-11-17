@@ -91,6 +91,7 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Customer")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateQuotation(CreateQuotationWithPoolViewModel vm)
         {
             if (!ModelState.IsValid)
@@ -122,6 +123,74 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
                 return View();
             }
 
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> UpdateQuotation(int quotationId)
+        {
+            var quotationResult = await _quotationService.GetQuotationbyIdAsync(quotationId);
+            
+
+            if (!quotationResult.IsSuccess)
+            {
+                ViewBag.ErrorMessage = $"Could not add quotation: {quotationResult.Errors.FirstOrDefault()}";
+                return View();
+            }
+
+            var vm = new QuotationUpdateViewModel
+            {
+                Id = quotationId,
+                AdminComment = quotationResult.Data.AdminComment,
+                CustomerComment = quotationResult.Data.CustomerComment,
+                Price = quotationResult.Data.Price,
+                
+            };
+
+            return View(vm);
+
+        }
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateQuotation(QuotationUpdateViewModel vm)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!ModelState.IsValid)
+            {
+                
+                return View();
+            }
+            if (User.IsInRole("Admin"))
+            {
+                var quotationAdmin = new QuotationUpdateRequestModel
+                {
+                    AdminComment = vm.AdminComment,
+                    Price = vm.Price,
+                    UserId = userId,
+                    Id = vm.Id
+                };
+                var resultAdmin = await _quotationService.UpdateAsyncQuotation(quotationAdmin);
+                if (!resultAdmin.IsSuccess)
+                {
+                    ViewBag.ErrorMessage = $"Could not add quotation: {resultAdmin.Errors.FirstOrDefault()}";
+                    return View(vm);
+                }
+            }
+            var quotation = new QuotationUpdateRequestModel
+            {
+                UserId = userId,
+                CustomerComment = vm.CustomerComment,
+                Id = vm.Id
+            };
+
+            var result = await _quotationService.UpdateAsyncQuotation(quotation);
+            if (!result.IsSuccess)
+            {
+                ViewBag.ErrorMessage = $"Could not add quotation: {result.Errors.FirstOrDefault()}";
+                return View(vm);
+            }
             return RedirectToAction("Index");
         }
     }
