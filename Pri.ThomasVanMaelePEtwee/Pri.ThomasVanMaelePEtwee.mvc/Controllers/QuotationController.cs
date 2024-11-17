@@ -38,45 +38,26 @@ namespace Pri.ThomasVanMaelePEtwee.mvc.Controllers
 
             var viewModel = new QuotationIndexViewModel();
 
-            if (User.IsInRole("Admin"))
-            {
-                var quotationViewModels = resultAdmin.Data.Select(q => new QuotationDetailViewModel
-                {
-                    Id = q.Id,
-                    Price = q.Price,
-                    UserName = q.User.UserName,
-                    SwimmingpoolNames = q.Pools.Select(p => p.Name).ToList(),
-                    RequestDate = q.RequestDate,
-                    ResponseDate = q.ResponseDate,
-                    Status = q.Status,
-                    CustomerComment = q.CustomerComment,
-                    AdminComment = q.AdminComment
-                }).ToList();
-               
-                viewModel.Quotations = quotationViewModels;
-                return View(viewModel);
-            }
+            var quotations = User.IsInRole("Admin") ? resultAdmin.Data : resultCustomer.Data;
 
-            else 
+            var quotationViewModels = quotations.Select(q => new QuotationDetailViewModel
             {
-                var customerName = User.Identity.Name;
-                var quotationViewModels = resultCustomer.Data.Select(q => new QuotationDetailViewModel
-                {
-                    Id = q.Id,
-                    Price = q.Price,
-                    UserName = customerName,
-                    SwimmingpoolNames = q.Pools.Select(p => p.Name).ToList(),
-                    RequestDate = q.RequestDate,
-                    ResponseDate = q.ResponseDate,
-                    Status = q.Status,
-                    CustomerComment = q.CustomerComment,
-                    AdminComment = q.AdminComment
-                }).ToList();
+                Id = q.Id,
+                Price = q.Price,
+                UserName = User.IsInRole("Admin") ? q.User.UserName : User.Identity.Name, //checken
+                SwimmingpoolNames = q.Pools.Select(p => p.Name).ToList(),
+                RequestDate = q.RequestDate,
+                ResponseDate = q.ResponseDate,
+                Status = q.Status,
+                CustomerComment = q.CustomerComment,
+                AdminComment = q.AdminComment
+            }).ToList();
 
-                viewModel.Quotations = quotationViewModels;
-                return View(viewModel);
-            }
-            
+
+            viewModel.Quotations = quotationViewModels;
+
+            return View(viewModel);
+
         }
         [HttpGet]
         [Authorize(Roles = "Customer")]

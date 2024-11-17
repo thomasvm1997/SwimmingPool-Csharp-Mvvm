@@ -170,7 +170,11 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
 
             if (userRoles.Contains("Admin"))
             {
-                quotation.Status = QuotationStatus.Approved;
+                if (quotation.Status == QuotationStatus.Pending)
+                {
+                    quotation.Status = QuotationStatus.Approved;
+                }
+                
                 quotation.ResponseDate = DateTime.Now;
                 quotation.Price = updateRequestModel.Price;
                 quotation.AdminComment = updateRequestModel.AdminComment;
@@ -184,6 +188,10 @@ namespace Pri.ThomasVanMaelePEtwee.core.Services
 
             else
             {
+                if(quotation.Status == QuotationStatus.Approved)
+                {
+                    quotation.Status = QuotationStatus.Pending;
+                }
                 quotation.CustomerComment = updateRequestModel.CustomerComment;
                 await SaveChangesAsync();
                 return new BaseResultModel
